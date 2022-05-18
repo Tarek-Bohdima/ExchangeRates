@@ -10,8 +10,6 @@ import com.terraconnect.exchangerates.models.Rates
 import com.terraconnect.exchangerates.repository.BaseRepository
 import com.terraconnect.exchangerates.util.DispatcherProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,16 +19,6 @@ class MainViewModel @Inject constructor(
     private val dispatchers: DispatcherProvider,
 ) : ViewModel() {
 
-    sealed class ExchangeRatesState {
-        class Success(val resultText: String) : ExchangeRatesState()
-        class Failure(val errorText: String) : ExchangeRatesState()
-        object Loading : ExchangeRatesState()
-        object Empty : ExchangeRatesState()
-    }
-
-    private val _conversionState = MutableStateFlow<ExchangeRatesState>(ExchangeRatesState.Empty)
-    val conversionState: StateFlow<ExchangeRatesState> = _conversionState
-
     private val _resultRates = MutableLiveData<List<Rates>>()
     val resultRates: LiveData<List<Rates>>
         get() = _resultRates
@@ -38,10 +26,7 @@ class MainViewModel @Inject constructor(
 
     private fun convert() {
         viewModelScope.launch(dispatchers.main) {
-            _conversionState.value = ExchangeRatesState.Loading
             when (val ratesResponse = repository.getExchangeRates()) {
-                is Result.Error -> _conversionState.value =
-                    ExchangeRatesState.Failure(ratesResponse.toString())
                 is Result.Success -> {
                     val rates = ratesResponse.data.rates
                     val pairs = ratesResponse.data.pairs

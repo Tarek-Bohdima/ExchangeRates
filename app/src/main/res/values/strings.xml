@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Exchange Rates</string>
     <string name="currency_rate_double" translatable="false">%1$.2f</string>
+    <string name="label_text_view_from">From</string>
+    <string name="label_text_view_to">To</string>
+    <string name="label_text_view_rate">Rate</string>
 </resources>
