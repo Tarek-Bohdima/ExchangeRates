@@ -9,8 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.terraconnect.exchangerates.R
 import com.terraconnect.exchangerates.databinding.FragmentMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class MainFragment : Fragment() {
 
     private lateinit var binding: FragmentMainBinding
@@ -23,9 +25,17 @@ class MainFragment : Fragment() {
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false)
 
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
 
         binding.viewModel = viewModel
+
+        val adapter = CurrencyListAdapter()
+
+        binding.recyclerView.adapter = adapter
+
+        viewModel.resultRates.observe(viewLifecycleOwner){
+            adapter.submitList(it)
+        }
 
         return binding.root
     }
