@@ -5,7 +5,7 @@ import androidx.databinding.ktx.BuildConfig
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
-//@HiltAndroidApp
+@HiltAndroidApp
 class MyApp: Application() {
 
     override fun onCreate() {

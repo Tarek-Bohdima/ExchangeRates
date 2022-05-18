@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Exchange Rates</string>
+    <string name="currency_rate_double" translatable="false">%1$.2f</string>
 </resources>
