@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.terraconnect.exchangerates.data.Result
-import com.terraconnect.exchangerates.models.Pairs
 import com.terraconnect.exchangerates.models.Rate
 import com.terraconnect.exchangerates.repository.BaseRepository
 import com.terraconnect.exchangerates.util.DispatcherProvider
@@ -33,14 +32,14 @@ class MainViewModel @Inject constructor(
 
                     val calculator = RateCalculator(rates)
 
-                    val calculatedRates = pairs.map { pair ->
+                    val calculatedRates = pairs.mapNotNull { pair ->
                         val conversionRate = calculator.calculateRate(pair.from, pair.to)
                         if (conversionRate != null) {
                             Rate(pair.from, pair.to, conversionRate)
                         } else {
                             null
                         }
-                    }.filterNotNull()
+                    }
 
                     _resultRates.value = calculatedRates
                 }

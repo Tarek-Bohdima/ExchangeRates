@@ -4,13 +4,10 @@ import com.terraconnect.exchangerates.data.Result
 import com.terraconnect.exchangerates.data.remote.RatesApiService
 import com.terraconnect.exchangerates.data.remote.dto.asDomainModel
 import com.terraconnect.exchangerates.models.ExchangeRates
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
 class Repository @Inject constructor(
     private val api: RatesApiService,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseRepository {
 
     override suspend fun getExchangeRates(): Result<ExchangeRates> {
