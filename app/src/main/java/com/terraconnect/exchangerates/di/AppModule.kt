@@ -16,7 +16,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
 
-private const val BASE_URL = "http://gnb.dev.airtouchmedia.com/"
+private const val BASE_URL = "https://2e6116f4-ff07-420d-9300-4d81c13202a7.mock.pstmn.io"
 
 @Module
 @InstallIn(SingletonComponent::class)

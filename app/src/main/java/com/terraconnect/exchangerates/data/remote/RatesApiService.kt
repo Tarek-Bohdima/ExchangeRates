@@ -6,6 +6,6 @@ import retrofit2.http.GET
 
 
 interface RatesApiService {
-    @GET("rates2.json")
+    @GET("rates")
     suspend fun getRates(): Response<ExchangeRatesDTO>
 }
