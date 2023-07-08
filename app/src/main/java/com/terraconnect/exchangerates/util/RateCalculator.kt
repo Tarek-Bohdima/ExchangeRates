@@ -2,7 +2,7 @@ package com.terraconnect.exchangerates.util
 
 import com.terraconnect.exchangerates.models.Rate
 
-class RateCalculator(private val rates: List<Rate>) {
+class RateCalculator(rates: List<Rate>) {
 
     private val rateMap = mutableMapOf<String, MutableMap<String, Double>>()
 
