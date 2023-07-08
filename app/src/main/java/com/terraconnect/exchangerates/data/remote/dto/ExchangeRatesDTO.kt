@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.terraconnect.exchangerates.models.ExchangeRates
 import com.terraconnect.exchangerates.models.Pairs
-import com.terraconnect.exchangerates.models.Rates
+import com.terraconnect.exchangerates.models.Rate
 
 @JsonClass(generateAdapter = true)
 data class ExchangeRatesDTO(
@@ -19,9 +19,9 @@ data class ExchangeRatesDTO(
 /**
  * Convert Network results to domain objects
  */
-fun ExchangeRatesDTO.asRatesDomainModel(): List<Rates> {
+fun ExchangeRatesDTO.asRatesDomainModel(): List<Rate> {
     return rates.map {
-        Rates(
+        Rate(
             from = it.from,
             to = it.to,
             rate = it.rate

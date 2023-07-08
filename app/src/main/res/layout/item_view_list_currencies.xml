@@ -6,7 +6,7 @@
     <data>
         <variable
             name="rate"
-            type="com.terraconnect.exchangerates.models.Rates" />
+            type="com.terraconnect.exchangerates.models.Rate" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
