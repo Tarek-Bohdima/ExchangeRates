@@ -6,17 +6,17 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.terraconnect.exchangerates.databinding.ItemViewListCurrenciesBinding
-import com.terraconnect.exchangerates.models.Rates
+import com.terraconnect.exchangerates.models.Rate
 
 class CurrencyListAdapter :
-    ListAdapter<Rates, CurrencyListAdapter.CurrencyViewHolder>(CurrencyDiffCallBack()) {
+    ListAdapter<Rate, CurrencyListAdapter.CurrencyViewHolder>(CurrencyDiffCallBack()) {
 
 
     class CurrencyViewHolder private constructor(
         private val viewDataBinding: ItemViewListCurrenciesBinding,
     ) :
         RecyclerView.ViewHolder(viewDataBinding.root) {
-        fun bind(rates: Rates) {
+        fun bind(rates: Rate) {
             viewDataBinding.rate = rates
             viewDataBinding.executePendingBindings()
         }
@@ -43,12 +43,12 @@ class CurrencyListAdapter :
     }
 }
 
-class CurrencyDiffCallBack : DiffUtil.ItemCallback<Rates>() {
-    override fun areItemsTheSame(oldItem: Rates, newItem: Rates): Boolean {
+class CurrencyDiffCallBack : DiffUtil.ItemCallback<Rate>() {
+    override fun areItemsTheSame(oldItem: Rate, newItem: Rate): Boolean {
         return oldItem === newItem
     }
 
-    override fun areContentsTheSame(oldItem: Rates, newItem: Rates): Boolean {
+    override fun areContentsTheSame(oldItem: Rate, newItem: Rate): Boolean {
         return oldItem == newItem
     }
 
