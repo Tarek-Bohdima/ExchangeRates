@@ -1,21 +1,14 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Keep generic signatures so Retrofit can introspect Call<T> return types.
+-keepattributes Signature, InnerClasses, EnclosingMethod
+-keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Moshi reflection-free codegen produces *JsonAdapter classes — keep them.
+-keep,allowobfuscation,allowshrinking class * implements com.squareup.moshi.JsonAdapter
+-keep,allowobfuscation,allowshrinking class **JsonAdapter { *; }
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Retrofit needs to call our suspend interface methods.
+-keep,allowobfuscation,allowshrinking interface retrofit2.Call
+-keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Keep DTO classes — Moshi codegen relies on the public constructor + properties.
+-keep class com.terraconnect.exchangerates.data.remote.dto.** { *; }
