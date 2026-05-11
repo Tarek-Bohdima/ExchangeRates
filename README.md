@@ -2,7 +2,7 @@
 
 > A single-screen Android app rebuilt as a teaching reference for graph algorithms, classic data structures, and Gang of Four design patterns. It happens to convert currencies because the rate table is a natural graph.
 
-Not a production app. No live backend, no auth, no analytics — the rate data is hand-curated and intentionally contains an arbitrage triangle so Bellman-Ford has something to find on first launch.
+Not a production app. No auth, no analytics. A live backend (Frankfurter, https://www.frankfurter.dev/) *is* wired up but isn't the default — the embedded rate dataset is hand-curated and intentionally contains an arbitrage triangle so Bellman-Ford has something to find on first launch.
 
 The intended audience is a candidate studying for an interview, or an interviewer who wants something concrete to pick apart. Every algorithm carries step-by-step pedagogical comments. Every Gang of Four pattern is wired live; nothing is in the repo "for show".
 
@@ -43,13 +43,13 @@ Switching strategies in the UI lets you see how each one picks a different path 
 | Pattern | Where to look |
 |---|---|
 | **Strategy** | `core/algorithm/PathFindingStrategy.kt` + five implementations |
-| **Factory** | `core/algorithm/StrategyFactory.kt` (Hilt-multibound `Map<StrategyKind, PathFindingStrategy>`) |
+| **Factory** | `core/algorithm/StrategyFactory.kt` — interface, `DefaultStrategyFactory` impl wired via Hilt-multibound `Map<StrategyKind, PathFindingStrategy>` |
 | **Template Method** | `core/algorithm/AbstractPathFindingStrategy.kt` — guards `findPath`, subclasses implement `search` |
 | **Chain of Responsibility** | `core/algorithm/StrategyChain.kt` — first non-null wins (Direct → BFS → Dijkstra → Bellman-Ford) |
 | **Builder** | `core/ds/CurrencyGraph.Builder` — fluent, validating, single-shot, returns an immutable graph |
 | **Decorator** | `data/repository/CachingExchangeRatesRepository.kt` — wraps `DefaultExchangeRatesRepository`, wired live in `DataModule` |
 | **Adapter** | `data/remote/dto/ExchangeRatesDto.toDomain()` — DTO ↔ domain bridge, keeps Moshi annotations off domain models |
-| **Facade** | `domain/usecase/ConversionFacade.kt` — single seam between ViewModel and the use-case subsystem |
+| **Facade** | `domain/usecase/ConversionFacade.kt` — interface; `DefaultConversionFacade` is the impl. Single seam between ViewModel and the use-case subsystem |
 | **Singleton** | Hilt `@Singleton` scopes throughout `di/` |
 | **Observer** | Repository → ViewModel via `StateFlow`/`Flow` |
 | **State** | `ui/conversion/ConversionUiState` sealed interface — exhaustive `when` in Compose |
@@ -98,7 +98,7 @@ Law of Demeter is taken seriously: the ViewModel knows about `ConversionFacade` 
 | UI | Jetpack Compose (BOM 2024.12) + Material 3, dynamic colour on API 31+ |
 | DI | Hilt 2.53.1 (KSP, no kapt) |
 | Async | Coroutines 1.10.1 + StateFlow |
-| Network | Retrofit 2.11 + Moshi 1.15 codegen + OkHttp logging (only used if you swap in `RemoteExchangeRatesDataSource`) |
+| Network | Retrofit 2.11 + Moshi 1.15 codegen + OkHttp logging; backend is [Frankfurter](https://www.frankfurter.dev/) (free, no API key, ECB-backed). Only used when `RemoteExchangeRatesDataSource` is bound. |
 | Test | JUnit 4, Turbine, MockK, kotlinx-coroutines-test |
 
 ---
@@ -123,7 +123,7 @@ Law of Demeter is taken seriously: the ViewModel knows about `ConversionFacade` 
 ./gradlew :app:lint
 ```
 
-To run against a real backend instead of the embedded dataset, change one binding in `di/DataModule.kt`:
+To run against the live [Frankfurter](https://www.frankfurter.dev/) API instead of the embedded dataset, change one binding in `di/DataModule.kt`:
 
 ```kotlin
 abstract fun bindDataSource(impl: EmbeddedExchangeRatesDataSource): ExchangeRatesDataSource
@@ -131,6 +131,8 @@ abstract fun bindDataSource(impl: EmbeddedExchangeRatesDataSource): ExchangeRate
 ```
 
 Repository, use cases, ViewModel, and UI need no changes — that's the payoff of coding to the interface.
+
+A heads-up about the trade-off: Frankfurter is ECB reference data, so it's strictly arbitrage-free and quotes one base against ~30 currencies, which produces a hub-and-spoke graph (every conversion is 1 or 2 hops via USD). The arbitrage card disappears and Dijkstra/Bellman-Ford/Floyd-Warshall all collapse to roughly the same answer. Useful for proving the swap works; less useful for showcasing what the algorithms can do — which is why embedded is the default.
 
 ---
 
