@@ -11,4 +11,4 @@
 -keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
 
 # Keep DTO classes — Moshi codegen relies on the public constructor + properties.
--keep class com.terraconnect.exchangerates.data.remote.dto.** { *; }
+-keep class com.tarek.exchangerates.data.remote.dto.** { *; }

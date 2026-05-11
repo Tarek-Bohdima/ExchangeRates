@@ -20,7 +20,7 @@ Single-module Android/Gradle project (`:app`). Use the wrapper.
 - JVM unit tests: `./gradlew :app:testDebugUnitTest`
 - Instrumented tests: `./gradlew :app:connectedDebugAndroidTest`
 - Lint: `./gradlew :app:lint`
-- One unit test: `./gradlew :app:testDebugUnitTest --tests "com.terraconnect.exchangerates.core.algorithm.PathFindingStrategyTest.dijkstra*"`
+- One unit test: `./gradlew :app:testDebugUnitTest --tests "com.tarek.exchangerates.core.algorithm.PathFindingStrategyTest.dijkstra*"`
 - Clean: `./gradlew clean`
 
 Toolchain (pinned in `gradle/libs.versions.toml` + `gradle/wrapper/gradle-wrapper.properties`): Gradle 8.10.2, AGP 8.7.3, Kotlin 2.1.0, KSP 2.1.0-1.0.29, Hilt 2.53.1, Compose BOM 2024.12.01 with Material 3, Coroutines 1.10.1, Retrofit 2.11, Moshi 1.15.1. `compileSdk`/`targetSdk` 35, `minSdk` 24, JVM target 17. Plugins are aliased via the version catalog, so dependency changes happen in one file.
@@ -29,7 +29,7 @@ KSP (not kapt) runs both Hilt and Moshi codegen. Compose Compiler is the first-p
 
 ## Architecture
 
-Clean Architecture in three rings plus DI, all under `com.terraconnect.exchangerates`:
+Clean Architecture in three rings plus DI, all under `com.tarek.exchangerates`:
 
 ```
 ui/ ───────────► domain/usecase + domain/model ◄─────── data/repository ◄─── data/source

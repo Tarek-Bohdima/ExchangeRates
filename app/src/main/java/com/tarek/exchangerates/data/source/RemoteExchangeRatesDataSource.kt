@@ -1,0 +1,25 @@
+package com.tarek.exchangerates.data.source
+
+import com.tarek.exchangerates.data.remote.RatesApiService
+import com.tarek.exchangerates.data.remote.dto.toDomain
+import com.tarek.exchangerates.domain.model.ExchangeRate
+import javax.inject.Inject
+
+/**
+ * Retrofit-backed data source. Stays *behind the [ExchangeRatesDataSource]
+ * interface*, so swapping it in is one DI binding change — see the
+ * [com.tarek.exchangerates.di.DataModule].
+ */
+class RemoteExchangeRatesDataSource @Inject constructor(
+    private val api: RatesApiService,
+) : ExchangeRatesDataSource {
+
+    override suspend fun fetchRates(): List<ExchangeRate> {
+        val response = api.getRates()
+        val body = response.body()
+        if (!response.isSuccessful || body == null) {
+            error("Rates request failed: HTTP ${response.code()} ${response.message()}")
+        }
+        return body.rates.toDomain()
+    }
+}

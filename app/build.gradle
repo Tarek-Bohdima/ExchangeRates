@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace "com.terraconnect.exchangerates"
+    namespace "com.tarek.exchangerates"
     compileSdk 35
 
     defaultConfig {
-        applicationId "com.terraconnect.exchangerates"
+        applicationId "com.tarek.exchangerates"
         minSdk 24
         targetSdk 35
         versionCode 1
