@@ -109,7 +109,7 @@ Law of Demeter is taken seriously: the ViewModel knows about `ConversionFacade` 
 
 # One specific test
 ./gradlew :app:testDebugUnitTest \
-  --tests "com.terraconnect.exchangerates.core.algorithm.PathFindingStrategyTest.dijkstra*"
+  --tests "com.tarek.exchangerates.core.algorithm.PathFindingStrategyTest.dijkstra*"
 
 # Lint
 ./gradlew :app:lint
@@ -146,3 +146,9 @@ That's a ~1.19% loop — well above the 0.1% epsilon — so `DetectArbitrageUseC
 - Not a perfect Dijkstra. The max-product variant requires an arbitrage-free graph; the file's docblock explains exactly when and why. Bellman-Ford is the safe choice on the general graph.
 
 For a deeper dive into where each pattern lives and how the modules wire together, see [`CLAUDE.md`](./CLAUDE.md).
+
+---
+
+## License
+
+[MIT](./LICENSE) © 2026 Tarek Bohdima.
