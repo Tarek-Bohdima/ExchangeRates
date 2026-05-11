@@ -13,14 +13,22 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
 
 /**
- * Network plumbing — only used if you flip [DataModule] to bind the remote
- * data source. Kept here so the wiring is obvious and "one switch" away.
+ * Network plumbing — only exercised if you flip `DataModule` to bind
+ * `RemoteExchangeRatesDataSource`. Kept here so the wiring is obvious and
+ * "one switch" away.
+ *
+ * The backend is Frankfurter (https://www.frankfurter.dev/) — free, no API key,
+ * ECB-backed daily reference rates. Trade-off vs. the embedded dataset: every
+ * Frankfurter response is one base → N quotes, which yields a strictly
+ * arbitrage-free hub-and-spoke graph. The algorithm showcase loses some of its
+ * teeth (no arbitrage triangle, no multi-hop optima distinct from BFS), which
+ * is why `DataModule` keeps `Embedded` as the default.
  */
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    private const val BASE_URL = "https://example.invalid/"
+    private const val BASE_URL = "https://api.frankfurter.dev/"
 
     @Provides
     @Singleton
