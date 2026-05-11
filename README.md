@@ -6,6 +6,14 @@ Not a production app. No live backend, no auth, no analytics — the rate data i
 
 The intended audience is a candidate studying for an interview, or an interviewer who wants something concrete to pick apart. Every algorithm carries step-by-step pedagogical comments. Every Gang of Four pattern is wired live; nothing is in the repo "for show".
 
+<p align="center">
+  <img src="docs/screenshots/01-initial.png" alt="Initial state: input card, algorithm picker, arbitrage card, reachable-currencies card" width="320" />
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/02-result.png" alt="After Convert: result card with composite rate, hop count, algorithm used, and a USD → AUD path breadcrumb" width="320" />
+</p>
+
+The first screenshot is the cold-start state — Dijkstra is the default strategy, the rate-graph has already been folded by Bellman-Ford into the arbitrage card (`EUR → GBP → USD → EUR, +1.190%`), and Union-Find tells the UI which currencies are reachable from USD. The second shows the result card after tapping **Convert**: composite rate, hop count, the algorithm used, and a breadcrumb of the actual path the strategy picked.
+
 ---
 
 ## What's interesting about it

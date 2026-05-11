@@ -3,6 +3,10 @@ package com.tarek.exchangerates.ui.conversion
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,6 +29,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -211,7 +216,7 @@ private fun CurrencyDropdown(
                 .fillMaxWidth()
                 .menuAnchor(),
         )
-        androidx.compose.material3.ExposedDropdownMenu(
+        DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
@@ -247,14 +252,23 @@ private fun AlgorithmPickerCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             // Filter chips give a "tabby" picker without pulling in a TabRow.
-            // Horizontal scroll handles overflow on narrow screens.
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
+            // LazyRow + animateScrollToItem keeps the selected chip's *next*
+            // neighbour visible after a tap, so the user can always tell what's
+            // coming. Scrolling to (selectedIndex - 1) parks the selected chip
+            // second-from-left, leaving room on the right for the next one.
+            val listState = rememberLazyListState()
+            LaunchedEffect(state.selectedAlgorithm) {
+                val index = state.supportedAlgorithms.indexOf(state.selectedAlgorithm)
+                if (index >= 0) {
+                    listState.animateScrollToItem((index - 1).coerceAtLeast(0))
+                }
+            }
+            LazyRow(
+                state = listState,
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                state.supportedAlgorithms.forEach { kind ->
+                items(state.supportedAlgorithms) { kind ->
                     FilterChip(
                         selected = kind == state.selectedAlgorithm,
                         onClick = { onEvent(ConversionEvent.AlgorithmChanged(kind)) },

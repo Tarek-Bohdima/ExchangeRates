@@ -13,35 +13,43 @@ import javax.inject.Inject
 /**
  * Facade (GoF) over the three use cases plus the repository.
  *
- * The ViewModel could inject each use case individually, but then it would
- * know about four collaborators and the order in which to chain them. The
- * Facade hides that subsystem behind one cohesive object: "convert", "scan
- * for arbitrage", "what's reachable". The ViewModel's surface shrinks; the
- * Law of Demeter stays happy; tests get a single seam to substitute.
+ * Exposed as an interface so the ViewModel depends on the abstraction, not the
+ * concrete coordination class. That's the whole point of "code to abstractions":
+ * the consumer needs only the contract, and tests can substitute a fake facade
+ * without spinning up the real use-case graph.
  *
- * Not a god-class — the actual work still lives in the individual use cases.
- * This is purely a coordination layer.
+ * The default implementation is purely a coordination layer — the actual work
+ * still lives in the individual use cases, so it's not a god-class.
  */
-class ConversionFacade @Inject constructor(
+interface ConversionFacade {
+    fun observeGraph(): Flow<CurrencyGraph>
+    suspend fun refresh()
+    fun convert(graph: CurrencyGraph, input: Money, target: Currency, kind: StrategyKind): ConversionResult
+    fun arbitrage(graph: CurrencyGraph): List<ArbitrageOpportunity>
+    fun reachableFrom(graph: CurrencyGraph, source: Currency): Set<Currency>
+}
+
+class DefaultConversionFacade @Inject constructor(
     private val repository: ExchangeRatesRepository,
     private val convertCurrency: ConvertCurrencyUseCase,
     private val detectArbitrageUseCase: DetectArbitrageUseCase,
     private val reachableCurrencies: GetReachableCurrenciesUseCase,
-) {
+) : ConversionFacade {
 
-    fun observeGraph(): Flow<CurrencyGraph> = repository.observeGraph()
+    override fun observeGraph(): Flow<CurrencyGraph> = repository.observeGraph()
 
-    suspend fun refresh() = repository.refresh()
+    override suspend fun refresh() = repository.refresh()
 
-    fun convert(
+    override fun convert(
         graph: CurrencyGraph,
         input: Money,
         target: Currency,
         kind: StrategyKind,
     ): ConversionResult = convertCurrency(graph, input, target, kind)
 
-    fun arbitrage(graph: CurrencyGraph): List<ArbitrageOpportunity> = detectArbitrageUseCase(graph)
+    override fun arbitrage(graph: CurrencyGraph): List<ArbitrageOpportunity> =
+        detectArbitrageUseCase(graph)
 
-    fun reachableFrom(graph: CurrencyGraph, source: Currency): Set<Currency> =
+    override fun reachableFrom(graph: CurrencyGraph, source: Currency): Set<Currency> =
         reachableCurrencies(graph, source)
 }

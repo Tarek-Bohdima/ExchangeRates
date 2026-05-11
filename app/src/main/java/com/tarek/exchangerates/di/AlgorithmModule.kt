@@ -2,10 +2,12 @@ package com.tarek.exchangerates.di
 
 import com.tarek.exchangerates.core.algorithm.BellmanFordPathFindingStrategy
 import com.tarek.exchangerates.core.algorithm.BfsPathFindingStrategy
+import com.tarek.exchangerates.core.algorithm.DefaultStrategyFactory
 import com.tarek.exchangerates.core.algorithm.DijkstraPathFindingStrategy
 import com.tarek.exchangerates.core.algorithm.DirectLookupStrategy
 import com.tarek.exchangerates.core.algorithm.FloydWarshallPathFindingStrategy
 import com.tarek.exchangerates.core.algorithm.PathFindingStrategy
+import com.tarek.exchangerates.core.algorithm.StrategyFactory
 import com.tarek.exchangerates.core.algorithm.StrategyKind
 import dagger.Binds
 import dagger.MapKey
@@ -58,4 +60,7 @@ abstract class AlgorithmModule {
     @IntoMap
     @StrategyKey(StrategyKind.FLOYD_WARSHALL)
     abstract fun bindFloydWarshall(impl: FloydWarshallPathFindingStrategy): PathFindingStrategy
+
+    @Binds
+    abstract fun bindStrategyFactory(impl: DefaultStrategyFactory): StrategyFactory
 }
