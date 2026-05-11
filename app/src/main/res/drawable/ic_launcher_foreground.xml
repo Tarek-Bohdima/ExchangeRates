@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Adaptive-icon foreground.
+
+    108dp x 108dp viewport (the standard for adaptive icons). The launcher
+    will mask the outer ring into a circle/squircle/teardrop depending on the
+    OEM, so all the meaningful content stays inside the centre ~66dp "safe
+    zone" — roughly x: 21..87, y: 21..87 in this viewport.
+
+    The composition is the universal "exchange / swap" mark: two arrows of
+    equal weight, one pointing right above the other pointing left. Pure
+    white on the green background reads cleanly at every icon size.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Top arrow: pointing right.
+         Shaft from x=28 to x=70 at y=38..46, head extending to x=84 at y=42. -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M28,38 L70,38 L70,30 L84,42 L70,54 L70,46 L28,46 Z" />
+
+    <!-- Bottom arrow: pointing left.
+         Shaft from x=80 to x=38 at y=62..70, head extending to x=24 at y=66. -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M80,62 L38,62 L38,54 L24,66 L38,78 L38,70 L80,70 Z" />
+</vector>

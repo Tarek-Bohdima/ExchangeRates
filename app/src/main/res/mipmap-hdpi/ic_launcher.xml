@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Pre-API-26 fallback. The adaptive-icon variant in mipmap-anydpi-v26 is
+    used on API 26+. On 24-25 the launcher picks this drawable instead: green
+    background, swap arrows on top, composed at runtime with a layer-list.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/ic_launcher_background" />
+    <item
+        android:drawable="@drawable/ic_launcher_foreground"
+        android:gravity="center" />
+</layer-list>
