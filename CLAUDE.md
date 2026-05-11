@@ -57,18 +57,18 @@ di/              (Hilt modules)
   - `LruCache<K, V>` — `LinkedHashMap(accessOrder = true)` + `removeEldestEntry` override. Synchronized.
 
 - **Algorithms** (`core/algorithm/`):
-  - `PathFindingStrategy` (`fun interface`) + `AbstractPathFindingStrategy` (Template Method base) + `StrategyKind` enum + `StrategyFactory` (Hilt-multibound) + `StrategyChain` (Chain of Responsibility).
+  - `PathFindingStrategy` (`fun interface`) + `AbstractPathFindingStrategy` (Template Method base) + `StrategyKind` enum + `StrategyFactory` (interface, with `DefaultStrategyFactory` as the Hilt-multibound impl) + `StrategyChain` (Chain of Responsibility).
   - Five implementations, each documented at the top of its file with the intuition, the complexity, and any precondition: `DirectLookupStrategy`, `BfsPathFindingStrategy`, `DijkstraPathFindingStrategy` (max-product variant; requires arbitrage-free graph), `BellmanFordPathFindingStrategy` (handles arbitrage via `-ln(rate)` transform), `FloydWarshallPathFindingStrategy` (O(V³) precompute cached per graph instance).
 
 - **Data layer** (`data/`):
-  - `ExchangeRatesDataSource` interface with `EmbeddedExchangeRatesDataSource` (default) and `RemoteExchangeRatesDataSource` (Retrofit + Moshi codegen DTOs in `data/remote/dto/`).
+  - `ExchangeRatesDataSource` interface with `EmbeddedExchangeRatesDataSource` (default) and `RemoteExchangeRatesDataSource` backed by the Frankfurter API (`https://api.frankfurter.dev/v1/latest?base=USD`). DTOs in `data/remote/dto/`.
   - `ExchangeRatesRepository` interface, `DefaultExchangeRatesRepository` (uses `MutableStateFlow<CurrencyGraph?>` + `onSubscription` for lazy first-fetch + `Mutex`-guarded refresh), and `CachingExchangeRatesRepository` (Decorator over the default).
 
 - **Use cases + Facade** (`domain/usecase/`):
   - `ConvertCurrencyUseCase` — picks a strategy via `StrategyFactory.get(kind)` and shapes the result. Same-currency goes through the identity-path branch (empty `ConversionPath`).
   - `DetectArbitrageUseCase` — Bellman-Ford from each vertex; canonicalises cycle rotations to dedupe; filters cycles whose profit factor is within `EPSILON = 1e-3`.
   - `GetReachableCurrenciesUseCase` — builds a UnionFind from edges and returns `componentOf(source) - source`.
-  - `ConversionFacade` — the single collaborator the ViewModel knows about. Hides the three use cases behind a Facade (GoF).
+  - `ConversionFacade` — interface; `DefaultConversionFacade` is the Hilt-bound impl. The single collaborator the ViewModel knows about. Hides the three use cases behind a Facade (GoF).
 
 - **UI** (`ui/conversion/`, `ui/theme/`):
   - `MainActivity` (single-activity, edge-to-edge) hosts `ConversionScreen`.
@@ -89,7 +89,8 @@ di/              (Hilt modules)
 ### DI wiring (Hilt)
 
 - `AlgorithmModule` — multi-binds every `PathFindingStrategy` into `Map<StrategyKind, PathFindingStrategy>` via `@IntoMap` + custom `@StrategyKey` `@MapKey`. Adding a sixth algorithm is one line in this module.
-- `DataModule` — binds `ExchangeRatesDataSource` to embedded by default; swap to `RemoteExchangeRatesDataSource` is a one-line change.
+- `DataModule` — binds `ExchangeRatesDataSource` to `EmbeddedExchangeRatesDataSource` by default; flipping the target to `RemoteExchangeRatesDataSource` (one `@Binds` parameter) switches the app to live Frankfurter rates. Embedded stays the default because Frankfurter is strictly arbitrage-free and produces a hub-and-spoke graph — the embedded dataset's arbitrage triangle and multi-hop optima are what make the algorithm showcase interesting.
+- `DomainModule` — binds `ConversionFacade` to `DefaultConversionFacade`.
 - `NetworkModule` — Retrofit + Moshi + OkHttp; only exercised when the remote data source is bound.
 - `CoroutineModule` — production `DispatcherProvider`.
 
